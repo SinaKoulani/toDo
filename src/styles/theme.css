@@ -1,0 +1,29 @@
+:root {
+  --color-primary: #2563eb;
+
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+
+  --color-border: #dbeafe;
+
+  --color-completed: #94a3b8;
+  --color-completed-surface: #f1f5f9;
+}
+
+.dark {
+  --color-primary: #3b82f6;
+
+  --color-background: #0f172a;
+  --color-surface: #172554;
+
+  --color-text: #f8fafc;
+  --color-text-muted: #94a3b8;
+
+  --color-border: #1e40af;
+
+  --color-completed: #64748b;
+  --color-completed-surface: #1e293b;
+}
