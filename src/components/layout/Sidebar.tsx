@@ -1,11 +1,14 @@
 import ListForm from '../lists/ListForm'
-import type { TodoList } from '../../types/list'
+import ListItem from '../lists/ListItem'
+import type { TodoList } from '../../types/todo'
 
 type SidebarProps = {
   lists: TodoList[]
   activeListId: string | null
   onSelectList: (listId: string) => void
   onCreateList: (name: string) => void
+  onEditList: (listId: string, name: string) => void
+  onDeleteList: (listId: string) => void
 }
 
 function Sidebar({
@@ -13,6 +16,8 @@ function Sidebar({
   activeListId,
   onSelectList,
   onCreateList,
+  onEditList,
+  onDeleteList,
 }: SidebarProps) {
   return (
     <aside className="w-64 shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] p-4">
@@ -23,24 +28,16 @@ function Sidebar({
       <ListForm onCreateList={onCreateList} />
 
       <nav className="flex flex-col gap-1">
-        {lists.map((list) => {
-          const isActive = list.id === activeListId
-
-          return (
-            <button
-              key={list.id}
-              type="button"
-              onClick={() => onSelectList(list.id)}
-              className={`w-full rounded-md px-3 py-2 text-left text-sm ${
-                isActive
-                  ? 'bg-[var(--color-primary)] text-white'
-                  : 'text-[var(--color-text)] hover:bg-[var(--color-background)]'
-              }`}
-            >
-              {list.name}
-            </button>
-          )
-        })}
+        {lists.map((list) => (
+          <ListItem
+            key={list.id}
+            list={list}
+            isActive={list.id === activeListId}
+            onSelectList={onSelectList}
+            onEditList={onEditList}
+            onDeleteList={onDeleteList}
+          />
+        ))}
       </nav>
     </aside>
   )
