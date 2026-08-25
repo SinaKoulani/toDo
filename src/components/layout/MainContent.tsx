@@ -1,41 +1,46 @@
-import type { Todo } from '../../types/todo'
+import type { Task } from '../../types/todo'
 import TodoForm from '../todos/TodoForm'
 import TodoList from '../todos/TodoList'
 
 type MainContentProps = {
-  todos: Todo[]
-  activeListId: string | null
-  onCreateTodo: (title: string, description: string) => void
-  onToggleTodo: (todoId: string) => void
-  onDeleteTodo: (todoId: string) => void
-  onReorderTodos: (listId: string, orderedTodoIds: string[]) => void
+  tasks: Task[]
+  isLoading: boolean
+  error: string | null
+  onCreateTask: (title: string, description: string) => void
+  onToggleTask: (task: Task) => void
+  onEditTask: (taskId: number, title: string) => void
+  onDeleteTask: (taskId: number) => void
 }
 
 function MainContent({
-  todos,
-  activeListId,
-  onCreateTodo,
-  onToggleTodo,
-  onDeleteTodo,
-  onReorderTodos,
+  tasks,
+  isLoading,
+  error,
+  onCreateTask,
+  onToggleTask,
+  onEditTask,
+  onDeleteTask,
 }: MainContentProps) {
-  if (!activeListId) {
-    return (
-      <div className="flex flex-1 items-center justify-center text-[var(--color-text-muted)]">
-        Select or create a list to get started
-      </div>
-    )
-  }
-
   return (
-    <div className="flex-1 p-6">
-      <TodoForm onCreateTodo={onCreateTodo} />
-      <TodoList
-        todos={todos}
-        onToggleTodo={onToggleTodo}
-        onDeleteTodo={onDeleteTodo}
-        onReorderTodos={onReorderTodos}
-      />
+    <div className="mx-auto max-w-2xl p-6">
+      {error && (
+        <p className="mb-4 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+          {error}
+        </p>
+      )}
+
+      <TodoForm onCreateTask={onCreateTask} />
+
+      {isLoading ? (
+        <p className="text-sm text-[var(--color-text-muted)]">Loading tasks...</p>
+      ) : (
+        <TodoList
+          tasks={tasks}
+          onToggleTask={onToggleTask}
+          onEditTask={onEditTask}
+          onDeleteTask={onDeleteTask}
+        />
+      )}
     </div>
   )
 }

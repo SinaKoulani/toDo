@@ -1,10 +1,10 @@
 import { useState, type FormEvent } from 'react'
 
 type TodoFormProps = {
-  onCreateTodo: (title: string, description: string) => void
+  onCreateTask: (title: string, description: string) => void
 }
 
-function TodoForm({ onCreateTodo }: TodoFormProps) {
+function TodoForm({ onCreateTask }: TodoFormProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const trimmedTitle = title.trim()
@@ -16,7 +16,7 @@ function TodoForm({ onCreateTodo }: TodoFormProps) {
       return
     }
 
-    onCreateTodo(trimmedTitle, description.trim())
+    onCreateTask(trimmedTitle, description.trim())
     setTitle('')
     setDescription('')
   }
@@ -33,7 +33,7 @@ function TodoForm({ onCreateTodo }: TodoFormProps) {
       <textarea
         value={description}
         onChange={(event) => setDescription(event.target.value)}
-        placeholder="Description (optional)"
+        placeholder="Description"
         rows={2}
         className="w-full resize-none rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-text-muted)] placeholder:text-[var(--color-text-muted)] outline-none focus:border-[var(--color-primary)]"
       />

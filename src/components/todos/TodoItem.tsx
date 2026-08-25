@@ -1,79 +1,95 @@
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import type { Todo } from '../../types/todo'
+import { useState, type KeyboardEvent } from 'react'
+import type { Task } from '../../types/todo'
 
 type TodoItemProps = {
-  todo: Todo
-  onToggleTodo: (todoId: string) => void
-  onDeleteTodo: (todoId: string) => void
+  task: Task
+  onToggleTask: (task: Task) => void
+  onEditTask: (taskId: number, title: string) => void
+  onDeleteTask: (taskId: number) => void
 }
 
-function TodoItem({ todo, onToggleTodo, onDeleteTodo }: TodoItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: todo.id, disabled: todo.completed })
+function TodoItem({ task, onToggleTask, onEditTask, onDeleteTask }: TodoItemProps) {
+  const isCompleted = task.status === 'DONE'
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
+  const [isEditing, setIsEditing] = useState(false)
+  const [draftTitle, setDraftTitle] = useState(task.title)
+
+  const commitEdit = () => {
+    const trimmedTitle = draftTitle.trim()
+
+    if (trimmedTitle) {
+      onEditTask(task.id, trimmedTitle)
+    }
+
+    setIsEditing(false)
+  }
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      commitEdit()
+    }
+
+    if (event.key === 'Escape') {
+      setDraftTitle(task.title)
+      setIsEditing(false)
+    }
   }
 
   return (
     <li
-      ref={setNodeRef}
-      style={style}
       className={`flex items-start gap-3 rounded-lg border p-3 ${
-        todo.completed
+        isCompleted
           ? 'border-[var(--color-border)] bg-[var(--color-completed-surface)]'
           : 'border-[var(--color-primary)] bg-[var(--color-surface)]'
       }`}
     >
-      {!todo.completed && (
-        <button
-          type="button"
-          {...attributes}
-          {...listeners}
-          aria-label="Drag to reorder"
-          className="mt-1 cursor-grab text-[var(--color-text-muted)] active:cursor-grabbing"
-        >
-          ⠿
-        </button>
-      )}
-
       <input
         type="checkbox"
-        checked={todo.completed}
-        onChange={() => onToggleTodo(todo.id)}
+        checked={isCompleted}
+        onChange={() => onToggleTask(task)}
         className="mt-1 size-4 accent-[var(--color-primary)]"
       />
 
       <div className="flex flex-1 flex-col gap-0.5">
-        <span
-          className={`text-sm font-semibold ${
-            todo.completed
-              ? 'text-[var(--color-completed)] line-through'
-              : 'text-[var(--color-text)]'
-          }`}
-        >
-          {todo.title}
-        </span>
+        {isEditing ? (
+          <input
+            type="text"
+            value={draftTitle}
+            autoFocus
+            onChange={(event) => setDraftTitle(event.target.value)}
+            onBlur={commitEdit}
+            onKeyDown={handleKeyDown}
+            className="rounded border border-[var(--color-primary)] bg-[var(--color-background)] px-1 text-sm text-[var(--color-text)] outline-none"
+          />
+        ) : (
+          <span
+            onDoubleClick={() => !isCompleted && setIsEditing(true)}
+            className={`text-sm font-semibold ${
+              isCompleted
+                ? 'text-[var(--color-completed)] line-through'
+                : 'cursor-text text-[var(--color-text)]'
+            }`}
+          >
+            {task.title}
+          </span>
+        )}
 
-        {todo.description && (
+        {task.description && (
           <span
             className={`text-sm ${
-              todo.completed
+              isCompleted
                 ? 'text-[var(--color-completed)] line-through'
                 : 'text-[var(--color-text-muted)]'
             }`}
           >
-            {todo.description}
+            {task.description}
           </span>
         )}
       </div>
 
       <button
         type="button"
-        onClick={() => onDeleteTodo(todo.id)}
+        onClick={() => onDeleteTask(task.id)}
         aria-label="Delete todo"
         className="text-[var(--color-text-muted)] hover:text-red-500"
       >

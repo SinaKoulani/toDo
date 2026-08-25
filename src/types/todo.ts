@@ -1,17 +1,20 @@
-export interface Todo {
-  id: string;
-  listId: string;
-  title: string;
-  description: string;
-  completed: boolean;
-  order: number;
-  createdAt: string;
-  updatedAt: string;
+export type TaskStatus = 'TODO' | 'DONE'
+
+export interface Task {
+  id: number
+  title: string
+  description: string
+  status: TaskStatus
 }
 
-export interface TodoList {
-  id: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
+export interface CreateTaskPayload {
+  title: string
+  description: string
+  status: TaskStatus
+}
+
+export interface UpdateTaskPayload {
+  title?: string
+  description?: string
+  status?: TaskStatus
 }
